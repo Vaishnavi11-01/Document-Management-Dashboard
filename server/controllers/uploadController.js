@@ -2,6 +2,10 @@ const File = require('../models/File');
 const Notification = require('../models/Notification');
 
 const uploadController = {
+  // Set io instance (called from server.js)
+  setIO: (ioInstance) => {
+    uploadController.io = ioInstance;
+  },
   // Handle single file upload
   uploadSingle: async (req, res) => {
     try {
@@ -23,11 +27,28 @@ const uploadController = {
       await newFile.save();
 
       // Create success notification
-      await Notification.create({
+      const notification = await Notification.create({
         message: `File "${req.file.originalname}" uploaded successfully`,
         type: 'success',
         metadata: { fileId: newFile._id }
       });
+
+      // Emit Socket.IO event for real-time updates
+      if (uploadController.io) {
+        uploadController.io.emit('upload-complete', {
+          type: 'single',
+          file: newFile,
+          notification: notification,
+          message: `File "${req.file.originalname}" uploaded successfully`
+        });
+
+        // Emit notification event
+        uploadController.io.emit('new-notification', notification);
+
+        // Update unread count
+        const unreadCount = await Notification.countDocuments({ isRead: false });
+        uploadController.io.emit('unread-count-updated', { unreadCount });
+      }
 
       res.status(201).json({
         message: 'File uploaded successfully',
@@ -59,12 +80,27 @@ const uploadController = {
       const isBulkUpload = totalFiles > 3;
 
       // Create bulk upload notification
+      let bulkNotification = null;
       if (isBulkUpload) {
-        await Notification.create({
+        bulkNotification = await Notification.create({
           message: `Bulk upload in progress — processing ${totalFiles} files in background.`,
           type: 'info',
           metadata: { totalFiles, isBulkUpload: true }
         });
+
+        // Emit bulk upload start event
+        if (uploadController.io) {
+          uploadController.io.emit('bulk-upload-start', {
+            totalFiles,
+            message: `Bulk upload in progress — processing ${totalFiles} files in background.`
+          });
+
+          uploadController.io.emit('new-notification', bulkNotification);
+
+          // Update unread count
+          const unreadCount = await Notification.countDocuments({ isRead: false });
+          uploadController.io.emit('unread-count-updated', { unreadCount });
+        }
       }
 
       // Process each file
@@ -87,12 +123,39 @@ const uploadController = {
       // Create completion notification for bulk uploads
       if (isBulkUpload) {
         setTimeout(async () => {
-          await Notification.create({
+          const completionNotification = await Notification.create({
             message: `${totalFiles} files uploaded successfully`,
             type: 'success',
             metadata: { totalFiles, isBulkUpload: true }
           });
+
+          // Emit bulk upload completion event
+          if (uploadController.io) {
+            uploadController.io.emit('bulk-upload-complete', {
+              type: 'bulk',
+              totalFiles,
+              files: uploadedFiles,
+              notification: completionNotification,
+              message: `${totalFiles} files uploaded successfully`
+            });
+
+            uploadController.io.emit('new-notification', completionNotification);
+
+            // Update unread count
+            const unreadCount = await Notification.countDocuments({ isRead: false });
+            uploadController.io.emit('unread-count-updated', { unreadCount });
+          }
         }, 2000); // Simulate processing time
+      } else {
+        // For non-bulk uploads, emit completion immediately
+        if (uploadController.io) {
+          uploadController.io.emit('all-uploads-complete', {
+            type: 'multiple',
+            totalFiles,
+            files: uploadedFiles,
+            message: `${totalFiles} files uploaded successfully`
+          });
+        }
       }
 
       res.status(201).json({

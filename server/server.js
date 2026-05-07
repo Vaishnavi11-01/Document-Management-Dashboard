@@ -12,6 +12,7 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const socketHandler = require('./sockets/socket');
+const uploadController = require('./controllers/uploadController');
 
 // Connect to MongoDB
 connectDB();
@@ -46,6 +47,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Socket.IO handler
 socketHandler(io);
+
+// Set io instance in upload controller for real-time events
+uploadController.setIO(io);
 
 // Routes
 app.use('/api/upload', uploadRoutes);
