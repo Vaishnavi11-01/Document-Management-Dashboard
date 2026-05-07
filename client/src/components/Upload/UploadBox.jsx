@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, File, X } from 'lucide-react';
+import ProgressBar from './ProgressBar';
 
 const UploadBox = ({ onUpload, showToast }) => {
   const [uploadingFiles, setUploadingFiles] = useState([]);
@@ -45,32 +46,54 @@ const UploadBox = ({ onUpload, showToast }) => {
     try {
       const { uploadAPI } = await import('../services/api');
       
+      // Upload files sequentially for better progress tracking
       for (const fileObj of filesToUpload) {
         try {
           // Update status to uploading
           setUploadingFiles(prev => 
-            prev.map(f => f.id === fileObj.id ? { ...f, status: 'uploading' } : f)
+            prev.map(f => f.id === fileObj.id ? { 
+              ...f, 
+              status: 'uploading',
+              progress: 0,
+              startTime: Date.now()
+            } : f)
           );
 
-          // Simulate progress
-          simulateProgress(fileObj.id);
-
-          // Upload file
+          // Upload file with real progress tracking
           const response = await uploadAPI.uploadSingle(fileObj.file, (progressEvent) => {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setUploadingFiles(prev => 
-              prev.map(f => f.id === fileObj.id ? { ...f, progress } : f)
-            );
+            if (progressEvent.lengthComputable) {
+              const percent = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              
+              // Update progress for this specific file
+              setUploadingFiles(prev => 
+                prev.map(f => f.id === fileObj.id ? { 
+                  ...f, 
+                  progress: percent,
+                  loaded: progressEvent.loaded,
+                  total: progressEvent.total
+                } : f)
+              );
+            }
           });
 
           // Mark as complete
           setUploadingFiles(prev => 
-            prev.map(f => f.id === fileObj.id ? { ...f, status: 'complete', progress: 100 } : f)
+            prev.map(f => f.id === fileObj.id ? { 
+              ...f, 
+              status: 'complete', 
+              progress: 100,
+              completedAt: Date.now()
+            } : f)
           );
 
           if (onUpload) {
             onUpload(response.data.file);
           }
+
+          // Small delay between files for better UX
+          await new Promise(resolve => setTimeout(resolve, 500));
 
         } catch (error) {
           console.error('Upload error:', error);
@@ -78,7 +101,8 @@ const UploadBox = ({ onUpload, showToast }) => {
             prev.map(f => f.id === fileObj.id ? { 
               ...f, 
               status: 'error', 
-              error: error.response?.data?.error || error.message 
+              error: error.response?.data?.error || error.message,
+              failedAt: Date.now()
             } : f)
           );
         }
@@ -102,21 +126,7 @@ const UploadBox = ({ onUpload, showToast }) => {
     }
   };
 
-  const simulateProgress = (fileId) => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 30;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-      }
-      
-      setUploadingFiles(prev =>
-        prev.map(f => f.id === fileId ? { ...f, progress: Math.min(progress, 99) } : f)
-      );
-    }, 200);
-  };
-
+  
   const removeFile = (fileId) => {
     setUploadingFiles(prev => prev.filter(f => f.id !== fileId));
   };
@@ -193,28 +203,14 @@ const UploadBox = ({ onUpload, showToast }) => {
                 </button>
               </div>
               
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    fileObj.status === 'complete' 
-                      ? 'bg-green-500' 
-                      : fileObj.status === 'error'
-                      ? 'bg-red-500'
-                      : 'bg-blue-500'
-                  }`}
-                  style={{ width: `${fileObj.progress}%` }}
-                />
-              </div>
-              
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-gray-600">
-                  {fileObj.status === 'pending' && 'Pending...'}
-                  {fileObj.status === 'uploading' && `Uploading... ${Math.round(fileObj.progress)}%`}
-                  {fileObj.status === 'complete' && 'Complete'}
-                  {fileObj.status === 'error' && fileObj.error || 'Failed'}
-                </span>
-              </div>
+              <ProgressBar
+                progress={fileObj.progress}
+                status={fileObj.status}
+                loaded={fileObj.loaded}
+                total={fileObj.total}
+                startTime={fileObj.startTime}
+                error={fileObj.error}
+              />
             </div>
           ))}
         </div>
