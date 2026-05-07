@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Check, X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { notificationAPI } from '../services/api';
+import { notificationAPI } from '../../services/api';
 
 const NotificationCenter = () => {
   const [notifications, setNotifications] = useState([]);

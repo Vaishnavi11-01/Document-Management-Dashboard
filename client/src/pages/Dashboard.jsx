@@ -61,6 +61,10 @@ const Dashboard = () => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
+  const handleUploadComplete = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Header />

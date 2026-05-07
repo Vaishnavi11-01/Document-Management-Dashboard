@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Check, X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { notificationAPI } from '../services/api';
+import { notificationAPI } from '../../services/api';
+import socketService from '../../services/socket';
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,19 +27,18 @@ const NotificationDropdown = () => {
     fetchUnreadCount();
 
     // Set up Socket.IO listener for real-time updates
-    const socket = require('../services/socket').default;
-    socket.onNotification((notification) => {
+    socketService.onNotification((notification) => {
       setNotifications(prev => [notification, ...prev]);
       setUnreadCount(prev => prev + 1);
     });
 
-    socket.onUnreadCountUpdate((data) => {
+    socketService.onUnreadCountUpdate((data) => {
       setUnreadCount(data.unreadCount);
     });
 
     return () => {
-      socket.off('new-notification');
-      socket.off('unread-count-updated');
+      socketService.off('new-notification');
+      socketService.off('unread-count-updated');
     };
   }, []);
 

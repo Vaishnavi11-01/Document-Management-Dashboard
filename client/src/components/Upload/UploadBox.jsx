@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, X } from 'lucide-react';
+import { Upload, File, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import ProgressBar from './ProgressBar';
+import { uploadAPI } from '../../services/api';
 
 const UploadBox = ({ onUpload, showToast }) => {
   const [uploadingFiles, setUploadingFiles] = useState([]);
@@ -44,7 +45,6 @@ const UploadBox = ({ onUpload, showToast }) => {
     }
 
     try {
-      const { uploadAPI } = await import('../services/api');
       
       // Upload files sequentially for better progress tracking
       for (const fileObj of filesToUpload) {
@@ -60,7 +60,9 @@ const UploadBox = ({ onUpload, showToast }) => {
           );
 
           // Upload file with real progress tracking
+          console.log('Starting upload for file:', fileObj.file.name);
           const response = await uploadAPI.uploadSingle(fileObj.file, (progressEvent) => {
+            console.log('Upload progress:', progressEvent);
             if (progressEvent.lengthComputable) {
               const percent = Math.round(
                 (progressEvent.loaded * 100) / progressEvent.total
@@ -77,6 +79,7 @@ const UploadBox = ({ onUpload, showToast }) => {
               );
             }
           });
+          console.log('Upload response:', response);
 
           // Mark as complete
           setUploadingFiles(prev => 
@@ -97,6 +100,8 @@ const UploadBox = ({ onUpload, showToast }) => {
 
         } catch (error) {
           console.error('Upload error:', error);
+          console.error('Error response:', error.response);
+          console.error('Error data:', error.response?.data);
           setUploadingFiles(prev => 
             prev.map(f => f.id === fileObj.id ? { 
               ...f, 

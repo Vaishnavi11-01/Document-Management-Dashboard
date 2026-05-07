@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, Download, Calendar, HardDrive, Search, Trash2, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search, SortAsc, SortDesc, Calendar, FileText, HardDrive, Download, Trash2, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { fileAPI } from '../../services/api';
 
 const DocumentTable = ({ onRefresh }) => {
   const [documents, setDocuments] = useState([]);
