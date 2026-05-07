@@ -77,7 +77,16 @@ class SocketService {
   // Event listeners for bulk upload updates
   onBulkUploadUpdate(callback) {
     if (this.socket) {
-      this.socket.on('bulk-upload-update', callback);
+      this.socket.on('bulk-upload-start', callback);
+      this.socket.on('bulk-upload-complete', callback);
+    }
+  }
+
+  // Event listeners for upload completion
+  onUploadComplete(callback) {
+    if (this.socket) {
+      this.socket.on('upload-complete', callback);
+      this.socket.on('all-uploads-complete', callback);
     }
   }
 

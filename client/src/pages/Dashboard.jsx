@@ -1,18 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UploadBox from '../components/Upload/UploadBox';
 import DocumentTable from '../components/Documents/DocumentTable';
+import Toast from '../components/Notifications/Toast';
+import socketService from '../services/socket';
 
 const Dashboard = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [toasts, setToasts] = useState([]);
 
-  const handleUploadComplete = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
+  useEffect(() => {
+    // Connect to Socket.IO
+    socketService.connect('user_' + Math.random().toString(36).substr(2, 9));
+
+    // Listen for upload completion events
+    socketService.onUploadComplete((data) => {
+      console.log('Upload complete:', data);
+      showToast(data.message || 'Upload completed successfully', 'success');
+      setRefreshTrigger(prev => prev + 1);
+    });
+
+    // Listen for bulk upload start
+    socketService.onBulkUploadUpdate((data) => {
+      console.log('Bulk upload update:', data);
+      showToast(data.message || 'Bulk upload started', 'info');
+    });
+
+    // Listen for new notifications
+    socketService.onNotification((notification) => {
+      console.log('New notification:', notification);
+      showToast(notification.message, notification.type);
+    });
+
+    // Listen for unread count updates
+    socketService.onUnreadCountUpdate((data) => {
+      console.log('Unread count updated:', data);
+      // Update notification badge if needed
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socketService.disconnect();
+    };
+  }, []);
 
   const showToast = (message, type = 'info') => {
-    // Simple toast implementation for now
-    console.log(`Toast [${type}]: ${message}`);
-    // TODO: Implement proper toast component
+    const id = Date.now() + Math.random().toString(36).substr(2, 9);
+    const newToast = { id, message, type };
+    
+    setToasts(prev => [...prev, newToast]);
+    
+    // Auto-remove after duration
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
   return (
@@ -52,6 +96,16 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      
+      {/* Toast Notifications */}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => removeToast(toast.id)}
+        />
+      ))}
     </div>
   );
 };
