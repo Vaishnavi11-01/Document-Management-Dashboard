@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import UploadBox from '../components/Upload/UploadBox';
 import DocumentTable from '../components/Documents/DocumentTable';
 import Toast from '../components/Notifications/Toast';
+import NotificationCenter from '../components/Notifications/NotificationCenter';
 import socketService from '../services/socket';
 
 const Dashboard = () => {
@@ -85,14 +86,7 @@ const Dashboard = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4" style={{ fontFamily: 'Livvic, sans-serif' }}>
-                Notifications
-              </h2>
-              <div className="text-center py-8">
-                <p className="text-gray-500">Notification component will be implemented here</p>
-              </div>
-            </div>
+            <NotificationCenter />
           </div>
         </div>
       </div>
