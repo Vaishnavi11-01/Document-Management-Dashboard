@@ -79,20 +79,30 @@ const Dashboard = () => {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div className="space-y-8">
+          {/* Document Library Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6" style={{ fontFamily: 'Livvic, sans-serif' }}>
+              Document Library
+            </h2>
             <UploadBox 
               onUpload={handleUploadComplete} 
               showToast={showToast} 
               key={refreshTrigger}
             />
-            <DocumentTable 
-              onRefresh={handleUploadComplete}
-              key={`docs-${refreshTrigger}`}
-            />
+            <div className="mt-8">
+              <DocumentTable 
+                onRefresh={handleUploadComplete}
+                key={`docs-${refreshTrigger}`}
+              />
+            </div>
           </div>
 
-          <div className="lg:col-span-1">
+          {/* Notifications Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6" style={{ fontFamily: 'Livvic, sans-serif' }}>
+              Notifications
+            </h2>
             <NotificationCenter />
           </div>
         </div>
