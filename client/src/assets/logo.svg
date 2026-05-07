@@ -1,0 +1,40 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient circle -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.1"/>
+      <feComposite in2="offsetblur" in2="SourceGraphic"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="offsetblur"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main document icon with gradient fill -->
+  <g filter="url(#shadow)">
+    <!-- Document base -->
+    <rect x="20" y="15" width="80" height="50" rx="8" fill="url(#logoGradient)" />
+    
+    <!-- Document lines -->
+    <line x1="30" y1="25" x2="90" y2="25" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    <line x1="30" y1="35" x2="90" y2="35" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    <line x1="30" y1="45" x2="90" y2="45" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    
+    <!-- Upload arrow -->
+    <path d="M100 30 L110 30 L110 40 L100 40 Z" fill="#ffffff" opacity="0.9"/>
+    <circle cx="105" cy="35" r="3" fill="#ffffff" opacity="0.9"/>
+    
+    <!-- PDF text label -->
+    <text x="60" y="42" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">PDF</text>
+  </g>
+  
+  <!-- Company name -->
+  <text x="100" y="45" font-family="Livvic, sans-serif" font-size="14" font-weight="600" fill="#2C3E50" text-anchor="end">DocHub</text>
+</svg>
