@@ -3,6 +3,7 @@ import UploadBox from '../components/Upload/UploadBox';
 import DocumentTable from '../components/Documents/DocumentTable';
 import Toast from '../components/Notifications/Toast';
 import NotificationCenter from '../components/Notifications/NotificationCenter';
+import Header from '../components/Layout/Header';
 import socketService from '../services/socket';
 
 const Dashboard = () => {
@@ -62,6 +63,8 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Header />
+      
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'Livvic, sans-serif' }}>
