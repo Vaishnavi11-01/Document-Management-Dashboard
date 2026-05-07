@@ -154,26 +154,28 @@ const DocumentTable = ({ onRefresh }) => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                <tr className="border-b-2 border-gray-300 bg-gray-50">
+                  <th className="text-left py-4 px-4 font-bold text-gray-800">
                     <button
                       onClick={() => handleSort('originalName')}
-                      className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
+                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors"
+                      style={{ fontFamily: 'Livvic, sans-serif' }}
                     >
-                      <span>Name</span>
-                      <span className="text-xs">{getSortIcon('originalName')}</span>
+                      <span>File Name</span>
+                      <span className="text-sm text-blue-500">{getSortIcon('originalName')}</span>
                     </button>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-4 px-4 font-bold text-gray-800">
                     <button
                       onClick={() => handleSort('fileSize')}
-                      className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
+                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors"
+                      style={{ fontFamily: 'Livvic, sans-serif' }}
                     >
                       <span>Size</span>
-                      <span className="text-xs">{getSortIcon('fileSize')}</span>
+                      <span className="text-sm text-blue-500">{getSortIcon('fileSize')}</span>
                     </button>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-4 px-4 font-semibold text-gray-700">
                     <button
                       onClick={() => handleSort('createdAt')}
                       className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
@@ -182,49 +184,51 @@ const DocumentTable = ({ onRefresh }) => {
                       <span className="text-xs">{getSortIcon('createdAt')}</span>
                     </button>
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">Actions</th>
+                  <th className="text-center py-4 px-4 font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {documents.map((document) => (
-                  <tr key={document._id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={document._id} className="border-b border-gray-100 hover:bg-blue-50 transition-colors">
+                    <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0">
-                          <FileText className="w-5 h-5 text-red-500" />
+                          <FileText className="w-6 h-6 text-red-500" />
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900 truncate max-w-xs" style={{ fontFamily: 'Livvic, sans-serif' }}>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-gray-900 truncate text-lg" style={{ fontFamily: 'Livvic, sans-serif' }}>
                             {document.originalName}
                           </p>
-                          <p className="text-xs text-gray-500">PDF Document</p>
+                          <p className="text-xs text-gray-500 mt-1">PDF Document</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <HardDrive className="w-4 h-4" />
-                        <span className="text-sm">{formatFileSize(document.fileSize)}</span>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center space-x-2">
+                        <HardDrive className="w-5 h-5 text-blue-500" />
+                        <span className="font-bold text-gray-800 text-base" style={{ fontFamily: 'Livvic, sans-serif' }}>
+                          {formatFileSize(document.fileSize)}
+                        </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-4">
                       <div className="flex items-center space-x-2 text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span className="text-sm">{formatDate(document.createdAt)}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-4">
                       <div className="flex items-center justify-center space-x-2">
                         <button
                           onClick={() => handleDownload(document.filename, document.originalName)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                           title="Download"
                         >
                           <Download className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(document._id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
