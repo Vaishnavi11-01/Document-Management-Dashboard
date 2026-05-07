@@ -18,7 +18,6 @@ const DocumentTable = ({ onRefresh }) => {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const { fileAPI } = await import('../services/api');
       const response = await fileAPI.getFiles({
         page: currentPage,
         limit: 10,
@@ -38,7 +37,6 @@ const DocumentTable = ({ onRefresh }) => {
 
   const handleDownload = async (filename, originalName) => {
     try {
-      const { fileAPI } = await import('../services/api');
       fileAPI.downloadFile(filename);
     } catch (error) {
       console.error('Download error:', error);
@@ -52,7 +50,6 @@ const DocumentTable = ({ onRefresh }) => {
     }
 
     try {
-      const { fileAPI } = await import('../services/api');
       await fileAPI.deleteFile(fileId);
       fetchDocuments(); // Refresh the list
       if (onRefresh) onRefresh();
