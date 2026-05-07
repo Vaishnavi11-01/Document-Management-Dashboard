@@ -175,13 +175,14 @@ const DocumentTable = ({ onRefresh }) => {
                       <span className="text-sm text-blue-500">{getSortIcon('fileSize')}</span>
                     </button>
                   </th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-4 px-4 font-bold text-gray-800">
                     <button
                       onClick={() => handleSort('createdAt')}
-                      className="flex items-center space-x-1 hover:text-blue-600 transition-colors"
+                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors"
+                      style={{ fontFamily: 'Livvic, sans-serif' }}
                     >
-                      <span>Upload Date</span>
-                      <span className="text-xs">{getSortIcon('createdAt')}</span>
+                      <span>Date</span>
+                      <span className="text-sm text-blue-500">{getSortIcon('createdAt')}</span>
                     </button>
                   </th>
                   <th className="text-center py-4 px-4 font-semibold text-gray-700">Actions</th>
@@ -212,19 +213,23 @@ const DocumentTable = ({ onRefresh }) => {
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center space-x-2 text-gray-600">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm">{formatDate(document.createdAt)}</span>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-5 h-5 text-green-500" />
+                        <span className="font-medium text-gray-700" style={{ fontFamily: 'Livvic, sans-serif' }}>
+                          {formatDate(document.createdAt)}
+                        </span>
                       </div>
                     </td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center justify-center space-x-2">
+                      <div className="flex items-center justify-center space-x-3">
                         <button
                           onClick={() => handleDownload(document.filename, document.originalName)}
-                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                           title="Download"
+                          style={{ fontFamily: 'Livvic, sans-serif' }}
                         >
                           <Download className="w-4 h-4" />
+                          <span>Download</span>
                         </button>
                         <button
                           onClick={() => handleDelete(document._id)}
