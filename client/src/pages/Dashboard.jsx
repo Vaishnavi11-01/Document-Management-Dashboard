@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import UploadBox from '../components/Upload/UploadBox';
+import DocumentTable from '../components/Documents/DocumentTable';
 
 const Dashboard = () => {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleUploadComplete = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const showToast = (message, type = 'info') => {
+    // Simple toast implementation for now
+    console.log(`Toast [${type}]: ${message}`);
+    // TODO: Implement proper toast component
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
@@ -15,23 +29,15 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4" style={{ fontFamily: 'Livvic, sans-serif' }}>
-                Upload Documents
-              </h2>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <p className="text-gray-500">Upload component will be implemented here</p>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4" style={{ fontFamily: 'Livvic, sans-serif' }}>
-                Document Library
-              </h2>
-              <div className="text-center py-8">
-                <p className="text-gray-500">Document table component will be implemented here</p>
-              </div>
-            </div>
+            <UploadBox 
+              onUpload={handleUploadComplete} 
+              showToast={showToast} 
+              key={refreshTrigger}
+            />
+            <DocumentTable 
+              onRefresh={handleUploadComplete}
+              key={`docs-${refreshTrigger}`}
+            />
           </div>
 
           <div className="lg:col-span-1">
